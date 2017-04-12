@@ -1,38 +1,41 @@
 'use strict';
 module.change_code = 1;
-var Alexa = require('alexa-app');
-var FlavorDataHelper = require('./flavor_data_helper');
+let Alexa = require('alexa-app');
+let FlavorDataHelper = require('./flavor_data_helper');
 
-var app = new Alexa.app('icecreamflavor');
+let app = new Alexa.app('kopps');
 
 app.launch(function(req, res) {
-  var prompt = "For the flavor of the day, ask me for the flavor of the day.";
-  res.say(prompt).reprompt(prompt).shouldEndSession(false);
+    let helper = new FlavorDataHelper();
+    let prompt = helper.getPrompt();
+    res.say(prompt).reprompt(prompt).shouldEndSession(false);
 });
 
-app.intent('icecreamflavor', {
-  'utterances': ['{for the flavor of the day}']
+app.intent('todayflavor', {
+  'utterances': ['{|the|today\'s} {flavor|flavor\'s} {|of the day}']
 },
   function(req, res) {
-      var reprompt = 'Ask me for the flavor of the day.';
+      let reprompt = 'Ask me for the flavor of the day.';
 
-      var flavor = new FlavorDataHelper();
+      let helper = new FlavorDataHelper();
 
-      flavor.requestFlavor().then(function(body) {
-          var response = flavor.formatResponse(flavor.getFlavor(body));
-          console.log(response);
-          res.say(response).send();
-      }).catch(function(err) {
-          console.log(err.statusCode);
-          var prompt = 'I couldn\'t reach the flavor data, please try again later';
-          res.say(prompt).reprompt(reprompt).shouldEndSession(true).send();
-      });
-      return false;
+      return helper.getKoppsHtml().then(
+          function(webResponse) {
+              let alexaResponse = helper.formatResponse(helper.parseFlavorsForDay(webResponse.body, helper.getTodaysDay()));
+              res.say(alexaResponse).shouldEndSession(true).send();
+          }
+      ).catch(
+          function(err) {
+              console.log(err.statusCode);
+              let prompt = 'I couldn\'t retrieve Kopps flavor data, please try again later';
+              res.say(prompt).reprompt(reprompt).shouldEndSession(true).send();
+          }
+      );
   }
 );
 
 //hack to support custom utterances in utterance expansion string
-var utterancesMethod = app.utterances;
+let utterancesMethod = app.utterances;
 app.utterances = function() {
   return utterancesMethod().replace(/\{\-\|/g, '{');
 };

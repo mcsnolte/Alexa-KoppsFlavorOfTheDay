@@ -1,28 +1,30 @@
 'use strict';
-var _ = require('lodash');
-var rp = require('request-promise');
-var cheerio = require('cheerio');
-var ENDPOINT = 'https://www.kopps.com/flavor-forecast';
+let _ = require('lodash');
+let rp = require('request-promise');
+let cheerio = require('cheerio');
+let ENDPOINT = 'https://www.kopps.com/flavor-forecast';
 
 function FlavorDataHelper() { }
 
-FlavorDataHelper.prototype.requestFlavor = function() {
-  return this.getHtml().then( function(response) {
-      return response.body;
-  });
+FlavorDataHelper.prototype.getPrompt = function() {
+    return "For the flavor of the day, ask me for the flavor of the day.";
+};
+
+FlavorDataHelper.prototype.getTodaysDay = function() {
+    return new Date(Date.now()).getDate();
 };
 
 FlavorDataHelper.prototype.formatResponse = function(json) {
-    var template = _.template("Today's flavors are ${one} and ${two}");
+    let template = _.template("Today's flavors are ${one} and ${two}");
 
     return template({
-        one: json.one,
-        two: json.two
+        one: json[0],
+        two: json[1]
     });
 };
 
-FlavorDataHelper.prototype.getHtml = function() {
-  var options = {
+FlavorDataHelper.prototype.getKoppsHtml = function() {
+  let options = {
     method: 'GET',
     uri: ENDPOINT,
     resolveWithFullResponse: true
@@ -31,15 +33,17 @@ FlavorDataHelper.prototype.getHtml = function() {
   return rp(options);
 };
 
-FlavorDataHelper.prototype.getFlavor = function(html) {
-    var $ = cheerio.load(html);
+FlavorDataHelper.prototype.parseFlavorsForDay = function (html, day) {
+    day = day || this.getTodaysDay();
+    let $ = cheerio.load(html);
 
-    var json = {one: "", two: "" };
+    let json = {};
+    let dayHtml = $('div', `#${day}`);
 
-    // index 2 and 3 are the first (today) flavors
-    // 0 and 1 are the shake and sundae
-    json.one = $('h3').eq(2).text();
-    json.two = $('h3').eq(3).text();
+    dayHtml.children('h3').each(function(i, el) {
+       json[i] = $(el).text();
+    });
+
     return json;
 };
 
