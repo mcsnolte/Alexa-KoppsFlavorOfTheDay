@@ -19,18 +19,19 @@ app.intent('todayflavor', {
 
       let helper = new FlavorDataHelper();
 
-      return helper.getKoppsHtml().then(
+      helper.getKoppsHtml().then(
           function(webResponse) {
               let alexaResponse = helper.formatResponse(helper.parseFlavorsForDay(webResponse.body, helper.getTodaysDay()));
               res.say(alexaResponse).shouldEndSession(true).send();
           }
       ).catch(
           function(err) {
-              console.log(err.statusCode);
+              console.log(err);
               let prompt = 'I couldn\'t retrieve Kopps flavor data, please try again later';
               res.say(prompt).reprompt(reprompt).shouldEndSession(true).send();
           }
       );
+      return false;
   }
 );
 
