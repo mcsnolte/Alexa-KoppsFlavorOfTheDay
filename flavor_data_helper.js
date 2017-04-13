@@ -7,7 +7,7 @@ let ENDPOINT = 'https://www.kopps.com/flavor-forecast';
 function FlavorDataHelper() { }
 
 FlavorDataHelper.prototype.getPrompt = function() {
-    return "For the flavor of the day, ask me for the flavor of the day.";
+    return "For the flavor of the day, ask me for today\'s flavor of the day.";
 };
 
 FlavorDataHelper.prototype.getTodaysDay = function() {
@@ -15,7 +15,12 @@ FlavorDataHelper.prototype.getTodaysDay = function() {
 };
 
 FlavorDataHelper.prototype.formatResponse = function(json) {
-    let template = _.template("Today's flavors are ${one} and ${two}");
+    console.log(json[0]);
+    if( json[0] === undefined || json[1] === undefined ) {
+        return "Flavors for the given date could not be retrieved."
+    }
+
+    let template = _.template("The flavors are ${one} and ${two}");
 
     return template({
         one: json[0],

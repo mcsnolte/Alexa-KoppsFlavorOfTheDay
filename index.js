@@ -11,17 +11,34 @@ app.launch(function(req, res) {
     res.say(prompt).reprompt(prompt).shouldEndSession(false);
 });
 
-app.intent('todayflavor', {
-  'utterances': ['{|the|today\'s} {flavor|flavor\'s} {|of the day}']
+app.intent('flavor', {
+    'slots': {
+        'date': "AMAZON.DATE"
+    },
+    'utterances': ['{for|what is|what the} {-|date} {flavor} {of the day|}']
 },
   function(req, res) {
-      let reprompt = 'Ask me for the flavor of the day.';
+      let reprompt = 'Ask me for today\'s flavor of the day.';
+      let date = "";
 
       let helper = new FlavorDataHelper();
 
+      try {
+          date = new Date( req.slot("date") ).getDate();
+          if( isNaN(date) ) { throw 'Invalid date'; }
+          if( date < 1 || date > 31 ) { throw 'Invalid date'; }
+          console.log(date);
+      }
+      catch (error) {
+          console.log(error);
+          let alexaError = "Sorry, I could not understand the date, please try being more specific.";
+          res.say(alexaError).shouldEndSession(true).send();
+          return true;
+      }
+
       helper.getKoppsHtml().then(
           function(webResponse) {
-              let alexaResponse = helper.formatResponse(helper.parseFlavorsForDay(webResponse.body, helper.getTodaysDay()));
+              let alexaResponse = helper.formatResponse(helper.parseFlavorsForDay(webResponse.body, date));
               res.say(alexaResponse).shouldEndSession(true).send();
           }
       ).catch(
