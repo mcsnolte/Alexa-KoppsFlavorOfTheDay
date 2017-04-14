@@ -4,20 +4,21 @@ let rp = require('request-promise');
 let cheerio = require('cheerio');
 let ENDPOINT = 'https://www.kopps.com/flavor-forecast';
 
-function FlavorDataHelper() { }
+function FlavorDataHelper() {
+}
 
-FlavorDataHelper.prototype.getPrompt = function() {
+FlavorDataHelper.prototype.getPrompt = function () {
     return "For the flavor of the day, ask me for today\'s flavor of the day.";
 };
 
-FlavorDataHelper.prototype.getTodaysDay = function() {
+FlavorDataHelper.prototype.getTodaysDay = function () {
     return new Date(Date.now()).getDate();
 };
 
-FlavorDataHelper.prototype.formatResponse = function(json) {
+FlavorDataHelper.prototype.formatResponse = function (json) {
     console.log(json[0]);
-    if( json[0] === undefined || json[1] === undefined ) {
-        return "Flavors for the given date could not be retrieved."
+    if (json[0] === undefined || json[1] === undefined) {
+        return "Sorry, flavors for the provided date could not be found."
     }
 
     let template = _.template("The flavors are ${one} and ${two}");
@@ -28,14 +29,14 @@ FlavorDataHelper.prototype.formatResponse = function(json) {
     });
 };
 
-FlavorDataHelper.prototype.getKoppsHtml = function() {
-  let options = {
-    method: 'GET',
-    uri: ENDPOINT,
-    resolveWithFullResponse: true
-    // json: true
-  };
-  return rp(options);
+FlavorDataHelper.prototype.getKoppsHtml = function () {
+    let options = {
+        method: 'GET',
+        uri: ENDPOINT,
+        resolveWithFullResponse: true
+        // json: true
+    };
+    return rp(options);
 };
 
 FlavorDataHelper.prototype.parseFlavorsForDay = function (html, day) {
@@ -45,8 +46,8 @@ FlavorDataHelper.prototype.parseFlavorsForDay = function (html, day) {
     let json = {};
     let dayHtml = $('div', `#${day}`);
 
-    dayHtml.children('h3').each(function(i, el) {
-       json[i] = $(el).text();
+    dayHtml.children('h3').each(function (i, el) {
+        json[i] = $(el).text();
     });
 
     return json;
