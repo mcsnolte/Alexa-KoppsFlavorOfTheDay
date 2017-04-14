@@ -40,7 +40,6 @@ app.intent('flavor', {
             if (date < 1 || date > 31) {
                 throw 'Invalid date';
             }
-            console.log(date);
         }
         catch (error) {
             console.log(error);

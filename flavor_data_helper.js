@@ -16,7 +16,6 @@ FlavorDataHelper.prototype.getTodaysDay = function () {
 };
 
 FlavorDataHelper.prototype.formatResponse = function (json, date) {
-    console.log(json[0]);
     if (json[0] === undefined || json[1] === undefined) {
         return "Sorry, flavors for the provided date could not be found."
     }
