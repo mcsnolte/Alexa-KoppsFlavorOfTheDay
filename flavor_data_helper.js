@@ -15,17 +15,18 @@ FlavorDataHelper.prototype.getTodaysDay = function () {
     return new Date(Date.now()).getDate();
 };
 
-FlavorDataHelper.prototype.formatResponse = function (json) {
+FlavorDataHelper.prototype.formatResponse = function (json, date) {
     console.log(json[0]);
     if (json[0] === undefined || json[1] === undefined) {
         return "Sorry, flavors for the provided date could not be found."
     }
 
-    let template = _.template("The flavors are ${one} and ${two}");
+    let template = _.template("The custard flavors for the <say-as interpret-as='date' format='d'>${date}</say-as> are ${one} and ${two}");
 
     return template({
         one: json[0],
-        two: json[1]
+        two: json[1],
+        date: date
     });
 };
 

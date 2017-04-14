@@ -11,11 +11,20 @@ app.launch(function (req, res) {
     res.say(prompt).reprompt(prompt).shouldEndSession(false);
 });
 
+app.intent('AMAZON.HelpIntent', {
+    slots: {},
+}, function (req, res) {
+    var helper = new FlavorDataHelper();
+    var prompt = helper.getPrompt();
+    res.say(prompt).reprompt(prompt).shouldEndSession(false);
+    return true;
+});
+
 app.intent('flavor', {
         slots: {
             'DATE': "AMAZON.DATE"
         },
-        'utterances': ['{for|what is|what the} {-|DATE} {flavor} {of the day|}']
+        'utterances': ['{for|for the|what is|what the|what is the} {-|DATE} {flavor} {of the day|} {is|}']
     },
     function (req, res) {
         let reprompt = 'Ask me for today\'s flavor of the day.';
@@ -42,7 +51,7 @@ app.intent('flavor', {
 
         helper.getKoppsHtml().then(
             function (webResponse) {
-                let alexaResponse = helper.formatResponse(helper.parseFlavorsForDay(webResponse.body, date));
+                let alexaResponse = helper.formatResponse(helper.parseFlavorsForDay(webResponse.body, date), date);
                 res.say(alexaResponse).shouldEndSession(true).send();
             }
         ).catch(
@@ -55,6 +64,18 @@ app.intent('flavor', {
         return false;
     }
 );
+
+app.intent('AMAZON.StopIntent', {
+    slots: {},
+}, function (req, res) {
+    return true;
+});
+
+app.intent('AMAZON.CancelIntent', {
+    slots: {},
+}, function (req, res) {
+    return true;
+});
 
 //hack to support custom utterances in utterance expansion string
 let utterancesMethod = app.utterances;
