@@ -15,16 +15,16 @@ FlavorDataHelper.prototype.getTodaysDay = function () {
     return new Date(Date.now()).getDate();
 };
 
-FlavorDataHelper.prototype.formatResponse = function (json, date) {
-    if (json[0] === undefined || json[1] === undefined) {
+FlavorDataHelper.prototype.formatResponse = function (data, date) {
+    if (data[0] === undefined || data[1] === undefined) {
         return "Sorry, flavors for the provided date could not be found."
     }
 
     let template = _.template("The custard flavors for the <say-as interpret-as='date' format='d'>${date}</say-as> are ${one} and ${two}");
 
     return template({
-        one: json[0],
-        two: json[1],
+        one: data[0],
+        two: data[1],
         date: date
     });
 };
@@ -34,7 +34,6 @@ FlavorDataHelper.prototype.getKoppsHtml = function () {
         method: 'GET',
         uri: ENDPOINT,
         resolveWithFullResponse: true
-        // json: true
     };
     return rp(options);
 };
@@ -49,14 +48,14 @@ FlavorDataHelper.prototype.parseFlavorsForDay = function (html, day) {
 
     let $ = cheerio.load(html);
 
-    let json = {};
+    let data = {};
     let dayHtml = $('div', `#${day}`);
 
     dayHtml.children('h3').each(function (i, el) {
-        json[i] = $(el).text();
+        data[i] = $(el).text();
     });
 
-    return json;
+    return data;
 };
 
 module.exports = FlavorDataHelper;
