@@ -6,16 +6,16 @@ let expect = chai.expect;
 let FlavorDataHelper = require('../flavor_data_helper');
 chai.config.includeStack = true;
 
+let mockDataObj = require('./mock_data');
+
 describe('FlavorDataHelper', function() {
   let subject = new FlavorDataHelper();
-    describe('#getKoppsHtml', function() {
-        context('with a request', function() {
-            let value = false;
-            it('returns html', function() {
-                value = subject.getKoppsHtml().then(function() {
-                    return true;
-                });
-                return expect(value).to.eventually.eq(true);
+    describe('#formatResponse', function() {
+        context('with parsed data...', function() {
+            let value = "";
+            it('returns proper voice template', function() {
+                value = subject.formatResponse(mockDataObj.data, 4);
+                return expect(value).to.eq("The custard flavors for the <say-as interpret-as='date' format='d'>4</say-as> are Butter Pecan and Cherry Cycle");
             });
         });
     });
@@ -24,11 +24,10 @@ describe('FlavorDataHelper', function() {
         context('with a request', function() {
             let value = "";
             it('returns the flavor of the day', function() {
-                value = subject.getKoppsHtml().then(function(html) {
-                    let data = subject.parseFlavorsForDay(html.body, subject.getTodaysDay());
-                    return data[0] + " " + data[1];
-                });
-                return expect(value).to.eventually.eq("Cookies 'N Cream Strawberry Cheesecake");
+                let data = subject.parseFlavorsForDay(mockDataObj.html, 4);
+                value = data['0'] + " " + data['1'];
+
+                return expect(value).to.eq("Butter Pecan Cherry Cycle");
             });
         });
     });
