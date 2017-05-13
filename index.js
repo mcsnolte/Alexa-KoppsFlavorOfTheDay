@@ -56,7 +56,7 @@ app.intent('flavor', {
         ).catch(
             function (err) {
                 console.log(err);
-                let prompt = 'I couldn\'t retrieve Kopps flavor data, please try again later';
+                let prompt = 'I couldn\'t retrieve flavor data, please try again later';
                 res.say(prompt).reprompt(reprompt).shouldEndSession(true).send();
             }
         );
