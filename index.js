@@ -24,7 +24,7 @@ app.intent('flavor', {
         slots: {
             'DATE': "AMAZON.DATE"
         },
-        'utterances': ['{for|for the|what is|what the|what is the} {flavor} {of the day|} {for|for the|on the|on} {-|DATE} {is|}']
+        'utterances': ['{for|for the|what is|what the|what is the|what\'s the} {flavor} {of the day|} {is|} {for|for the|on the|on} {-|DATE} {is|}']
     },
     function (req, res) {
         let reprompt = 'Ask me for today\'s flavor of the day.';

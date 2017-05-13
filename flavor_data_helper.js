@@ -8,7 +8,7 @@ function FlavorDataHelper() {
 }
 
 FlavorDataHelper.prototype.getPrompt = function () {
-    return "For the flavor of the day, ask me for today\'s flavor of the day.";
+    return "Ask me what the flavor of the day is today.";
 };
 
 FlavorDataHelper.prototype.getTodaysDay = function () {
