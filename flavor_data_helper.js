@@ -41,6 +41,12 @@ FlavorDataHelper.prototype.getKoppsHtml = function () {
 
 FlavorDataHelper.prototype.parseFlavorsForDay = function (html, day) {
     day = day || this.getTodaysDay();
+
+    // day must be two chars long
+    if( day < 10 ) {
+        day = '0' + day;
+    }
+
     let $ = cheerio.load(html);
 
     let json = {};
